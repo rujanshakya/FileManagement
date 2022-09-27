@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MiniProjectFile.Models;
 
 namespace MiniProjectFile.Models
 {
@@ -8,5 +9,6 @@ namespace MiniProjectFile.Models
         {
 
         }
+        public DbSet<MiniProjectFile.Models.ImportSource> ImportSource { get; set; }
     }
 }
