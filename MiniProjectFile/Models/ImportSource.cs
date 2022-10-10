@@ -8,7 +8,7 @@
         public string? FilePath { get; set; }
         public string? FileFormat { get; set; }
         public string? CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; }=DateTime.Now;
 
     }
 }
