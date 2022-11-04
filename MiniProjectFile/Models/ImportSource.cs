@@ -1,4 +1,7 @@
-﻿namespace MiniProjectFile.Models
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+
+namespace MiniProjectFile.Models
 {
     public class ImportSource
     {
@@ -9,6 +12,8 @@
         public string? FileFormat { get; set; }
         public string? CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }=DateTime.Now;
+        [BindNever]
+        public string? Column { get; set; }
 
     }
 }

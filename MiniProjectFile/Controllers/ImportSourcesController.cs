@@ -12,11 +12,26 @@ namespace MiniProjectFile.Controllers
     public class ImportSourcesController : Controller
     {
         private readonly EntityFrameWork _context;
+        string _dataColumn = "";
 
         public ImportSourcesController(EntityFrameWork context)
         {
             _context = context;
         }
+
+        /*public string SaveTable(string[] function_param)
+        {
+            if (function_param != null)
+            {
+                //some code
+                Console.WriteLine(function_param);
+                return "Success";
+            }
+
+            //The following code will run if it's not successful. 
+            return "There must be at least one country in the Region.";
+            //Yeah it's always returning this b/c function_param is null;         
+        }*/
 
         // GET: ImportSources
         public async Task<IActionResult> Index()
@@ -52,16 +67,20 @@ namespace MiniProjectFile.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,FileName,FilePath,FileFormat,CreatedBy,CreatedOn")] ImportSource importSource)
+        public async Task<IActionResult> Create([Bind("Id,Name,FileName,FilePath,FileFormat,CreatedBy,CreatedOn")]ImportSource importSource ,[Bind("Column")] string column)
         {
+            _dataColumn=column;
+
             if (ModelState.IsValid)
             {
                 _context.Add(importSource);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(importSource);
+
+
         }
 
         // GET: ImportSources/Edit/5
