@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniProjectFile.Models;
 
@@ -11,9 +12,10 @@ using MiniProjectFile.Models;
 namespace MiniProjectFile.Migrations
 {
     [DbContext(typeof(EntityFrameWork))]
-    partial class EntityFrameWorkModelSnapshot : ModelSnapshot
+    [Migration("20221110081944_column-3.0")]
+    partial class column30
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,9 +72,6 @@ namespace MiniProjectFile.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TableData")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

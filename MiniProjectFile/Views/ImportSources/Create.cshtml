@@ -47,6 +47,9 @@
             <div class="form-group">
                 <input asp-for="Column" type="hidden" id="columnarray" class="form-control"/>
 </div>
+            <div class="form-group">
+                <input asp-for="TableData" type="hidden" id="TableData" class="form-control" />
+            </div>
             <br>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary me-2" />
@@ -62,9 +65,10 @@
         <div class="container" style="font-size:1em">
         <table id="FileData" class="table table-dark"> </table>
         </div>
+        </div>
         <script type="text/javascript" src="https://unpkg.com/read-excel-file@5.x/bundle/read-excel-file.min.js"></script>
         <script  src="~/js/File.js"></script>
-    </div>
+    
 </div>
 
 
@@ -74,3 +78,4 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     
 }
+ 

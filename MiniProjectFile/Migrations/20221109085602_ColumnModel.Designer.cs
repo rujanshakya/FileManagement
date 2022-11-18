@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniProjectFile.Models;
 
@@ -11,9 +12,10 @@ using MiniProjectFile.Models;
 namespace MiniProjectFile.Migrations
 {
     [DbContext(typeof(EntityFrameWork))]
-    partial class EntityFrameWorkModelSnapshot : ModelSnapshot
+    [Migration("20221109085602_ColumnModel")]
+    partial class ColumnModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,7 +35,7 @@ namespace MiniProjectFile.Migrations
                     b.Property<string>("HeaderName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ImportSourceId")
+                    b.Property<int?>("ImportSourceId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -72,9 +74,6 @@ namespace MiniProjectFile.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TableData")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("ImportSource");
@@ -84,9 +83,7 @@ namespace MiniProjectFile.Migrations
                 {
                     b.HasOne("MiniProjectFile.Models.ImportSource", null)
                         .WithMany("Columns")
-                        .HasForeignKey("ImportSourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ImportSourceId");
                 });
 
             modelBuilder.Entity("MiniProjectFile.Models.ImportSource", b =>
