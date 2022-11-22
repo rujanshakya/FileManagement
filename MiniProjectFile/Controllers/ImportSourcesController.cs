@@ -6,7 +6,10 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor.Infrastructure;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
@@ -98,7 +101,12 @@ namespace MiniProjectFile.Controllers
 
             ImportSource parentModel = new ImportSource();
             List<ColumnModel> tempColumn = new List<ColumnModel>();
-
+            
+            
+            
+            foreach (var col in objectColumn) {
+                Console.Write(col +"\n");
+            }
 /*            childModel.ImportSourceId = importSource.Id;
 *//*            childModel.HeaderName = column;
 */            foreach (var col in objectColumn)
@@ -284,6 +292,11 @@ namespace MiniProjectFile.Controllers
         private bool ImportSourceExists(int id)
         {
             return _context.ImportSource.Any(e => e.Id == id);
+        }public IActionResult Product() { 
+            
+                
+            return View();
         }
+
     }
 }
