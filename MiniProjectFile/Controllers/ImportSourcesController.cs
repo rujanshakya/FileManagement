@@ -292,11 +292,17 @@ namespace MiniProjectFile.Controllers
         private bool ImportSourceExists(int id)
         {
             return _context.ImportSource.Any(e => e.Id == id);
-        }public IActionResult Product() { 
-            
-                
-            return View();
+        }
+       
+        //GET for Product
+        public IActionResult Product(int id) {
+            id = 89;
+            var columnlist = from col in _context.CustomModel where col.ColumnModel.ImportSourceId == id select col;
+/*            var lcolumnlist = _context.CustomModel.Where(col => col.ColumnModel.ImportSourceId == id);
+*/
+            var importsource = from col in _context.ImportSource where col.Id == id select col;
+            return View(columnlist.ToList()) ;
         }
 
-    }
+    }   
 }

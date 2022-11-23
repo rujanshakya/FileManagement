@@ -11,5 +11,7 @@ namespace MiniProjectFile.Models
         }
         public DbSet<MiniProjectFile.Models.ImportSource>? ImportSource { get; set; }
         public DbSet<MiniProjectFile.Models.ColumnModel>? ColumnModel { get; set; }
+        public DbSet<MiniProjectFile.Models.CustomModel>? CustomModel { get; set; }
+
     }
 }

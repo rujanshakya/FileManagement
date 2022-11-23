@@ -1,19 +1,50 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model List<MiniProjectFile.Models.CustomModel>
 
-@model ColumnModel
-<div class="container">
+
+<div class="container-fluid">
     <h1 class="">ProductList</h1>
+    <select name="sFile" id="sFile">
+       @* @foreach(var item in Model)
+            {
+                    <option value="@item.">@item.</option>
+            }
+*@
+    </select>
     <br />
     <div class="row">
-    <div class="col-6">
+    <div class="col-4">
         <h2>ImportColumns</h2>
+        
+            <select name="Icolumn" id="Icolumn" class="form-select">
+                
+                
+                @foreach(var item in Model)
+            {
+                    <option value="@item.ColumnModel.ImportSourceId">@item.ColumnModel.HeaderName</option>
+            }
+            </select>
     </div>
-    <div class="col-6">
+    <div class="col-4">
         <h2>TableColumn</h2>
+            <select name="Tcolumn" id="Tcolumn" class="form-select">
+            @foreach(var item in Model)
+            {
+                    <option value="@item">@item</option>
+            }
+            </select>
+            
+
+         @* @{
+                List<string> listItems = new List<string>();
+                @foreach (var item in Model)
+                {
+                    listItems.Add(item);
+                }
+            }
+
+            @Html.DropDownList("yourDropName", listItems, new { @class = "form-control" })*@
+        </div>
     </div>
-    </div>
+            <button type="submit" id="BtnSave" class="btn btn-primary float-end">Save</button>
+
 </div>
