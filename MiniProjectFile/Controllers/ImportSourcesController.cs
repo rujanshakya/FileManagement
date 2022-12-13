@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.Json.Serialization;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -23,10 +25,13 @@ namespace MiniProjectFile.Controllers
     public class ImportSourcesController : Controller
     {
         private readonly EntityFrameWork _context;
+        private readonly DapperContext _Dcontext;
 
-        public ImportSourcesController(EntityFrameWork context)
+
+        public ImportSourcesController(EntityFrameWork context, DapperContext dcontext)
         {
             _context = context;
+            _Dcontext = dcontext;
         }
 
         /*public string SaveTable(string[] function_param)
@@ -83,13 +88,13 @@ namespace MiniProjectFile.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Id,Name,FileName,FilePath,FileFormat,CreatedBy,CreatedOn")] ImportSource importSource, [Bind("Column")] string column, [Bind("TableData")]  string tabledata)
+        public async Task<IActionResult> Create([Bind("Id,Name,FileName,FilePath,FileFormat,CreatedBy,CreatedOn")] ImportSource importSource, [Bind("Column")] string column, [Bind("TableData")] string tabledata)
         {
             //getting column data and changing it to an array
             List<string> objectColumn = JsonConvert.DeserializeObject<List<string>>(column);
-/*            var TableData = JsonConvert.DeserializeObject(tabledata);
-*/            /*            Console.WriteLine(TableData);
-            */
+            /*            var TableData = JsonConvert.DeserializeObject(tabledata);
+            */            /*            Console.WriteLine(TableData);
+                        */
 
 
             /*            ColumnModel childModel = new ColumnModel();
@@ -101,18 +106,20 @@ namespace MiniProjectFile.Controllers
 
             ImportSource parentModel = new ImportSource();
             List<ColumnModel> tempColumn = new List<ColumnModel>();
-            
-            
-            
-            foreach (var col in objectColumn) {
-                Console.Write(col +"\n");
+
+
+
+            foreach (var col in objectColumn)
+            {
+                Console.Write(col + "\n");
             }
-/*            childModel.ImportSourceId = importSource.Id;
-*//*            childModel.HeaderName = column;
-*/            foreach (var col in objectColumn)
+            /*            childModel.ImportSourceId = importSource.Id;
+            *//*            childModel.HeaderName = column;
+            */
+            foreach (var col in objectColumn)
             {
 
-                tempColumn.Add(new ColumnModel() { ImportSourceId=parentModel.Id, HeaderName=col });
+                tempColumn.Add(new ColumnModel() { ImportSourceId = parentModel.Id, HeaderName = col });
             }
 
 
@@ -128,11 +135,11 @@ namespace MiniProjectFile.Controllers
             parentModel.CreatedOn = importSource.CreatedOn;
             parentModel.Column = column;
             parentModel.Columns = tempColumn;
-/*            var mo = tempColumn;
-*/
-            
-            
-            
+            /*            var mo = tempColumn;
+            */
+
+
+
             //id=primaryKey, headerName=col.value
             //create pure model
 
@@ -141,13 +148,13 @@ namespace MiniProjectFile.Controllers
             //parentModel.ChildModels.Add(new ChildModel() { 1,"" });/anonymous class
 
             //child model persist into database.
-            
-            
-/*            Console.WriteLine(objectColumn);
-*/            /*            string columnstring= JsonConvert.SerializeObject(objectColumn);
-            *//*            Console.WriteLine(columnstring);
-            *//*            var result = objectColumn.SelectMany(x => x["Staffs"]).Values<int>().ToList();
-            */
+
+
+            /*            Console.WriteLine(objectColumn);
+            */            /*            string columnstring= JsonConvert.SerializeObject(objectColumn);
+                        *//*            Console.WriteLine(columnstring);
+                        *//*            var result = objectColumn.SelectMany(x => x["Staffs"]).Values<int>().ToList();
+                        */
             /*Console.WriteLine(objectColumn.GetType());*/
             /*            Console.WriteLine(columnstring.GetType());
             */
@@ -158,12 +165,12 @@ namespace MiniProjectFile.Controllers
 
             if (ModelState.IsValid)
             {
-                
+
                 _context.Add(parentModel);
                 await _context.SaveChangesAsync();
 
                 //create table from model data
-                
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -200,7 +207,7 @@ namespace MiniProjectFile.Controllers
                 return NotFound();
             }
 
-          if (ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 try
                 {
@@ -208,17 +215,17 @@ namespace MiniProjectFile.Controllers
                     updateModel = importSource;
                     updateModel.Column = column;
                     List<string> objectColumn = JsonConvert.DeserializeObject<List<string>>(column);
-                   
+
 
                     List<ColumnModel> tempColumn = new List<ColumnModel>();
-                    
+
                     foreach (var col in objectColumn)
                     {
 
                         tempColumn.Add(new ColumnModel() { ImportSourceId = importSource.Id, HeaderName = col });
                     }
 
-                    updateModel.Columns= tempColumn;
+                    updateModel.Columns = tempColumn;
 
                     /*var columnmodel = await _context.ColumnModel.FirstOrDefaultAsync(x => x.ImportSourceId == id);
                     _context.Remove(columnmodel);
@@ -229,7 +236,8 @@ namespace MiniProjectFile.Controllers
                     }
 */
                     var deletequery = from col in _context.ColumnModel where col.ImportSourceId == id select col;
-                    foreach (var data in deletequery) {
+                    foreach (var data in deletequery)
+                    {
                         _context.ColumnModel.Remove(data);
 
 
@@ -246,7 +254,8 @@ namespace MiniProjectFile.Controllers
                     else
                     {
                         throw;
-                    }                }
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(importSource);
@@ -293,16 +302,58 @@ namespace MiniProjectFile.Controllers
         {
             return _context.ImportSource.Any(e => e.Id == id);
         }
-       
-        //GET for Product
-        public IActionResult Product(int id) {
-            id = 89;
-            var columnlist = from col in _context.CustomModel where col.ColumnModel.ImportSourceId == id select col;
-/*            var lcolumnlist = _context.CustomModel.Where(col => col.ColumnModel.ImportSourceId == id);
-*/
-            var importsource = from col in _context.ImportSource where col.Id == id select col;
-            return View(columnlist.ToList()) ;
-        }
 
-    }   
+
+
+
+        public IActionResult Product([Bind("id")] int id)
+        {
+            try
+            {
+
+                var columnlist = from col in _context.ColumnModel where col.ImportSourceId == id select col;
+                /*var lcolumnlist = _context.CustomModel.Where(col => col.ColumnModel.ImportSourceId == id);*/
+
+                var importsource = from col in _context.ImportSource where col.Id == id select col;
+                var query = "select column_name as Id from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME ='ProductTable' and not column_name='Id' and not column_name='ImportSourceId'";
+                //var query = "select * from /*ImportSource*/";
+
+
+                var connection = _Dcontext.CreateConnection();
+                var column = connection.Query<string>(query);
+
+
+                //SelectListItem dropdown = new SelectListItem { }
+                CustomModel model = new CustomModel();
+                model.ImportSource = importsource.ToList();
+                model.ColumnModel = columnlist.ToList();
+                List<ListDropDown> drop = new List<ListDropDown>();
+                foreach (var item in column)
+                {
+                    drop.Add(new ListDropDown() { Text = item, Value = item });
+                }
+                model.ListDropDowns = drop;
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+        }
+         public IActionResult Save([Bind("data")] string data) {
+            List<ProductMapValue> dict = JsonConvert.DeserializeObject<List<ProductMapValue>>(data);
+            dict = dict.Where(x => x.value != "").ToList();
+           var dict2= dict[0];
+
+            //create map table in database
+            //create model in c#.
+            //prepare data to model.
+            //Store data to table.
+
+            return RedirectToAction(nameof(Index));
+        }
+    }
+    
 }

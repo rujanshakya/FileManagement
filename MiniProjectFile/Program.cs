@@ -4,6 +4,7 @@ using MiniProjectFile.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<EntityFrameWork>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
