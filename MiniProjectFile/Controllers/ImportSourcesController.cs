@@ -344,11 +344,32 @@ namespace MiniProjectFile.Controllers
         }
          public IActionResult Save([Bind("data")] string data) {
             List<ProductMapValue> dict = JsonConvert.DeserializeObject<List<ProductMapValue>>(data);
+            
             dict = dict.Where(x => x.value != "").ToList();
-           var dict2= dict[0];
+            
+            var parameters = new DynamicParameters();
+          
+
+
+            /*            var createquery = "Create table maptable(id int identity not null ,_key int, _value varchar(50) ,primary key(id))";
+            */            //var query = "select * from /*ImportSource*/";
+
+            var connection = _Dcontext.CreateConnection();
+            for (int i = 0; i < dict.Count; i++)
+            {
+                parameters.Add("k", dict[i].key);
+                parameters.Add("v", dict[i].value);
+                var queryadd = @"insert into maptable(ColumnId,ProductHeader) values (@k,@v)";
+                connection.Execute(queryadd,parameters);
+            }
 
             //create map table in database
+            
+            /*connection.Execute(createquery);*/
+
+
             //create model in c#.
+
             //prepare data to model.
             //Store data to table.
 
