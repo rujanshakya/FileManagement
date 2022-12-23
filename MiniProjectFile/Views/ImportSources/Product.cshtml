@@ -66,6 +66,7 @@
 <form asp-action="Save">
 <input asp-for="@Model.ListDropDowns[0].Text" id="data" type="text" name="data"/>
     <input type="submit" value="Save" class="btn btn-primary me-2" />
+    <input type="text" name="id" value="@Model.ImportSource[0].Id"/>
 
 </form>
 <script src="~/js/Map.js"> </script>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniProjectFile.Models;
 
@@ -11,9 +12,11 @@ using MiniProjectFile.Models;
 namespace MiniProjectFile.Migrations
 {
     [DbContext(typeof(EntityFrameWork))]
-    partial class EntityFrameWorkModelSnapshot : ModelSnapshot
+    [Migration("20221221074206_changenametoProductTable")]
+    partial class changenametoProductTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,9 +92,6 @@ namespace MiniProjectFile.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ColumnId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ImportSourceId")
                         .HasColumnType("int");
 
                     b.Property<string>("ProductHeader")

@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Dapper.Bulk;
+using Microsoft.Data.SqlClient;
 using System.Data;
 
 namespace MiniProjectFile.Models
@@ -14,4 +15,6 @@ namespace MiniProjectFile.Models
         }
         public IDbConnection CreateConnection() => new SqlConnection(_connectionString);
     }
+    
+
 }

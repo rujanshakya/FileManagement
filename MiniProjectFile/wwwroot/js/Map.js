@@ -9,7 +9,7 @@ save.addEventListener('click', () => {
         console.log(source[i].value)
         var _source = source[i].value;
         var _dest = dest[i].value;
-        var dict = { key: _source, value: _dest }
+        var dict = { ColumnId: _source, ProductHeader: _dest }
         data.push(dict);
 
     }

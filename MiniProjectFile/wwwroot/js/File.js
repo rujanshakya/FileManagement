@@ -16,7 +16,8 @@ inputFile.addEventListener('change', () => {
     var fileFormat = document.getElementById('fileFormat');
     var createdBy = document.getElementById('createdBy');
     var colarray = document.getElementById('columnarray');
-    var tableData = document.getElementById('TableData')
+    var tableData = document.getElementById('TableData');
+    var data = document.getElementById('Data');
     var currentFile = inputFile.files[0];
     var currentFileName = currentFile.name.split('.');
     _name.value = currentFileName[0];
@@ -43,11 +44,13 @@ inputFile.addEventListener('change', () => {
         var ColumnString = JSON.stringify(fdataColumn);
 
         //For table data into string
-        var TableData = dataArray.slice(1, dataArray.length);
+        var TableData = dataArray;
         var JsonTableData = JSON.stringify(TableData);
         colarray.value = ColumnString;
         tableData.value = JsonTableData;
-       
+
+        
+
         /*document.ajax({
             type: "POST",
             traditional: true,

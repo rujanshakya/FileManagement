@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Numerics;
 using System.Reflection.Metadata.Ecma335;
+using System.Reflection.PortableExecutable;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Dapper;
@@ -18,6 +20,7 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 using MiniProjectFile.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Z.Dapper.Plus;
 using JsonConverter = Newtonsoft.Json.JsonConverter;
 
 namespace MiniProjectFile.Controllers
@@ -57,6 +60,7 @@ namespace MiniProjectFile.Controllers
             {
                 Console.WriteLine(customer.Id + ", " + customer.HeaderName + ", " + customer.ImportSourceId);
             }*/
+
             return View(await _context.ImportSource.ToListAsync());
         }
 
@@ -135,6 +139,7 @@ namespace MiniProjectFile.Controllers
             parentModel.CreatedOn = importSource.CreatedOn;
             parentModel.Column = column;
             parentModel.Columns = tempColumn;
+            parentModel.TableData = tabledata;
             /*            var mo = tempColumn;
             */
 
@@ -342,38 +347,148 @@ namespace MiniProjectFile.Controllers
             }
 
         }
-         public IActionResult Save([Bind("data")] string data) {
+        public IActionResult Save([Bind("data")] string data, [Bind("id")] int id) {
             List<ProductMapValue> dict = JsonConvert.DeserializeObject<List<ProductMapValue>>(data);
-            
-            dict = dict.Where(x => x.value != "").ToList();
-            
-            var parameters = new DynamicParameters();
-          
-
-
-            /*            var createquery = "Create table maptable(id int identity not null ,_key int, _value varchar(50) ,primary key(id))";
-            */            //var query = "select * from /*ImportSource*/";
-
-            var connection = _Dcontext.CreateConnection();
-            for (int i = 0; i < dict.Count; i++)
+            for (int i=0; i < dict.Count(); i++)
             {
-                parameters.Add("k", dict[i].key);
-                parameters.Add("v", dict[i].value);
-                var queryadd = @"insert into maptable(ColumnId,ProductHeader) values (@k,@v)";
-                connection.Execute(queryadd,parameters);
+                dict[i].ImportSourceId = id;
             }
+            
+            dict = dict.Where(x => x.ProductHeader != "").ToList();
+            
+            var connection = _Dcontext.CreateConnection();
+
+
+            /*_context.ProductMapValue.Add(dict[0]);
+            _context.SaveChanges();*/
+
+
+            /*            
+                        for (int i = 0; i < dict.Count(); i++)
+                        {
+                            parameters.Add("k", dict[i].key);
+                            parameters.Add("v", dict[i].value);
+                            var queryadd = @"insert into maptable(ColumnId,ProductHeader) values (@k,@v)";
+                            connection.Execute(queryadd,parameters);
+                        }*/
+
+
+            //Bulkinsert
+            DapperPlusManager.Entity<ProductMapValue>().Table("ProductMapValue");
+            connection.BulkInsert(dict);
+
+
+
+
+
+
+
 
             //create map table in database
-            
-            /*connection.Execute(createquery);*/
+
+
 
 
             //create model in c#.
+
 
             //prepare data to model.
             //Store data to table.
 
             return RedirectToAction(nameof(Index));
+        }
+        public IActionResult DataInsert([Bind("Id")]int id)
+        {
+            //Getting TableData
+            ImportSource importsource = _context.ImportSource.Find(id);
+            var stringdata = importsource.TableData;
+            List<List<string>> tabledata = JsonConvert.DeserializeObject<List<List<string>>>(stringdata);
+
+
+            var  maptable = from x in _context.ProductMapValue where x.ImportSourceId == id select x;
+            List<ProductMapValue> maptablelist = maptable.ToList();
+            List<string> productheader = new();
+            List<int> columnid = new();
+            foreach(var item in maptablelist)
+            {
+                productheader.Add(item.ProductHeader);
+                columnid.Add(item.ColumnId);
+
+            }
+            List<string> mappedcolumnname = new();
+
+            foreach (var i in columnid)
+            {
+                var columnname = (from x in _context.ColumnModel where x.Id == i select x.HeaderName).ToList();
+                mappedcolumnname.Add(columnname[0]);
+            }
+
+            
+            
+
+            
+
+
+            /*            int columnid = maptable[0].ColumnId;
+            */            //Query data into datatable
+
+
+            var firstrow = tabledata[0];
+
+
+            DataTable table = new DataTable();
+            for (int i = 0; i < firstrow.Count(); i++)
+            {
+                table.Columns.Add(firstrow[i]);
+            }
+
+            for (int i = 1; i < tabledata.Count(); i++)
+            {
+                DataRow row = table.NewRow();
+                var rows = tabledata[i];
+
+                for (int j = 0; j < firstrow.Count(); j++) {
+
+                    row[firstrow[j]] = rows[j];
+
+                }
+                table.Rows.Add(row);
+
+
+            }
+
+            ProductTable product = new ProductTable();
+
+            foreach (DataRow r in table.Rows) {
+                Console.WriteLine("\n");
+                foreach (var c in mappedcolumnname) {
+                    Console.WriteLine(c + "=" + r[c]);
+
+                }
+            }
+            /*foreach (DataRow r in table.Rows) {
+                Console.WriteLine("\n");
+                foreach (DataColumn c in table.Columns) {
+                    Console.WriteLine(c +" =" + r[c]);
+                   
+                }
+                
+            }*/
+            //Prepared all data to model from excel sheet
+            //Select Columns from Map table with respect to current store and importsourceid.
+            //Filter those data only coming from map table column.
+            //Insert into product table
+
+           /* _context.ProductTable.Add(product);
+            _context.SaveChanges();*/
+
+
+
+
+
+
+
+            return View();
         }
     }
     

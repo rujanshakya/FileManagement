@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniProjectFile.Models;
 
@@ -11,13 +12,15 @@ using MiniProjectFile.Models;
 namespace MiniProjectFile.Migrations
 {
     [DbContext(typeof(EntityFrameWork))]
-    partial class EntityFrameWorkModelSnapshot : ModelSnapshot
+    [Migration("20221214082432_MainData")]
+    partial class MainData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.1")
+                .HasAnnotation("ProductVersion", "7.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -69,6 +72,9 @@ namespace MiniProjectFile.Migrations
                     b.Property<string>("FilePath")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("MainData")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -80,28 +86,6 @@ namespace MiniProjectFile.Migrations
                     b.ToTable("ImportSource");
                 });
 
-            modelBuilder.Entity("MiniProjectFile.Models.ProductMapValue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ColumnId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ImportSourceId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProductHeader")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProductMapValue");
-                });
-
             modelBuilder.Entity("MiniProjectFile.Models.ProductTable", b =>
                 {
                     b.Property<int>("Id")
@@ -110,37 +94,31 @@ namespace MiniProjectFile.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Brand")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Color")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageLink")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ColumnId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ImportSourceId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Link")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.Property<string>("ProductId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("SalePrice")
-                        .HasColumnType("float");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Size")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

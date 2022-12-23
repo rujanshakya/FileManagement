@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniProjectFile.Models;
 
@@ -11,9 +12,11 @@ using MiniProjectFile.Models;
 namespace MiniProjectFile.Migrations
 {
     [DbContext(typeof(EntityFrameWork))]
-    partial class EntityFrameWorkModelSnapshot : ModelSnapshot
+    [Migration("20221221074026_added-producttable")]
+    partial class addedproducttable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,9 +94,6 @@ namespace MiniProjectFile.Migrations
                     b.Property<int>("ColumnId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ImportSourceId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ProductHeader")
                         .HasColumnType("nvarchar(max)");
 
@@ -145,7 +145,7 @@ namespace MiniProjectFile.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductTable");
+                    b.ToTable("ProductTab");
                 });
 
             modelBuilder.Entity("MiniProjectFile.Models.ColumnModel", b =>

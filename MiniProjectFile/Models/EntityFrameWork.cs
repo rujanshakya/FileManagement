@@ -14,6 +14,11 @@ namespace MiniProjectFile.Models
         public DbSet<MiniProjectFile.Models.ColumnModel>? ColumnModel { get; set; }
         public DbSet<MiniProjectFile.Models.ProductTable>? ProductTable { get; set; }
 
+        public DbSet<MiniProjectFile.Models.ProductMapValue> ProductMapValue { get; set; }
+
+
+
+
 
     }
 }
