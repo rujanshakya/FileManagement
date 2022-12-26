@@ -442,6 +442,7 @@ namespace MiniProjectFile.Controllers
                 table.Columns.Add(firstrow[i]);
             }
 
+
             for (int i = 1; i < tabledata.Count(); i++)
             {
                 DataRow row = table.NewRow();
@@ -457,8 +458,7 @@ namespace MiniProjectFile.Controllers
 
             }
 
-            ProductTable product = new ProductTable();
-
+            
             foreach (DataRow r in table.Rows) {
                 Console.WriteLine("\n");
                 foreach (var c in mappedcolumnname) {
@@ -466,6 +466,97 @@ namespace MiniProjectFile.Controllers
 
                 }
             }
+
+            var listofheaders = productheader.Zip(mappedcolumnname, (p, m) => new { ProductName=p, MappedName=m });
+            List<ProductTable> listproduct = new();
+            foreach (DataRow r in table.Rows)
+            {
+                ProductTable product = new ProductTable();
+                product.ImportSourceId = id;
+                foreach (var c in listofheaders) {
+                    string productmap = c.ProductName;
+
+                    string mapcolumn = r[c.MappedName].ToString();
+                    if (productmap =="ProductId"){
+                        product.ProductId = mapcolumn;
+                    }
+                    if (productmap == "Link")
+                    {
+                        product.Link = mapcolumn;
+                    }
+                    if (productmap == "Title")
+                    {
+                        product.Title = mapcolumn;
+                    }
+                    if (productmap == "Description")
+                    {
+                        product.Description = mapcolumn;
+                    }
+                    if (productmap == "Price")
+                    {
+                        double price = double.Parse(mapcolumn);
+                        product.Price = price;
+                    }
+                    if (productmap == "SalePrice")
+                    {
+                        double price = 0;
+                        if (mapcolumn == "")
+                        {
+                            price = product.Price;
+                        }
+                        else {
+                            price = double.Parse(mapcolumn);
+                        }
+                        
+                        product.SalePrice = price;
+
+                    }
+                    if (productmap == "ImageLink")
+                    {
+                        product.ImageLink = mapcolumn;
+                    }
+                    if (productmap == "Brand")
+                    {
+                        product.Brand = mapcolumn;
+                    }
+                    if (productmap == "Color")
+                    {
+                        product.Color = mapcolumn;
+                    }
+                    if (productmap == "Size")
+                    {
+                        product.Size = mapcolumn;
+                    }
+
+
+                }
+
+                listproduct.Add(product);
+
+            }
+
+
+            /*foreach (DataRow r in table.Rows) {
+                    product.ImportSourceId = id;
+                int i = 0;
+                var mappedcolumnname[i]="";
+                for (int i=0; i < mappedcolumnname.Count(); i++) {
+                    for(in)
+                    product.ProductId = r[(mappedcolumnname[i])];
+                    product.Link = r[(mappedcolumnname[i])];
+                    product.Title =;
+                    product.Description =;
+                    product.Price =;
+                    product.SalePrice =;
+                    product.ImageLink =;
+                    product.Brand =;
+                    product.Color =;
+                    product.Size =;
+                    
+                }
+
+
+            }*/
             /*foreach (DataRow r in table.Rows) {
                 Console.WriteLine("\n");
                 foreach (DataColumn c in table.Columns) {
@@ -479,14 +570,21 @@ namespace MiniProjectFile.Controllers
             //Filter those data only coming from map table column.
             //Insert into product table
 
-           /* _context.ProductTable.Add(product);
-            _context.SaveChanges();*/
+            /* _context.ProductTable.Add(product);
+             _context.SaveChanges();*/
+
+            var connection = _Dcontext.CreateConnection();
+            connection.BulkInsert(listproduct);
 
 
 
 
 
+            return View();
+        }
 
+        public IActionResult Data()
+        {
 
             return View();
         }

@@ -6,6 +6,7 @@ namespace MiniProjectFile.Models
 {
     public class ProductTable
     {
+
         [Key]
         public int Id { get; set; }
         [ForeignKey("ImportSource.Id")]
