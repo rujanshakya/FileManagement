@@ -1,0 +1,60 @@
+﻿@model IList<ProductTable>
+<h1>Data</h1>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>
+                Image
+            </th>
+            <th>
+                ProductId
+            </th>
+            <th>
+                Title
+            </th>
+           
+            <th>
+                Price
+            </th>
+            <th>
+                SalePrice
+            </th>
+            <th>
+                Brand
+            </th>
+            <th>
+                Color
+            </th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                   <img src="@Html.DisplayFor(modelItem => item.ImageLink)" height="100px">
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                
+                <td>
+                    $@Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    $@Html.DisplayFor(modelItem => item.SalePrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Brand)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Color)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

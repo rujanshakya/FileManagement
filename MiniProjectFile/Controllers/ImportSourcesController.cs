@@ -585,8 +585,8 @@ namespace MiniProjectFile.Controllers
 
         public IActionResult Data()
         {
-
-            return View();
+            List<ProductTable> data = (from col in _context.ProductTable select col).ToList();
+            return View(data);
         }
     }
     
