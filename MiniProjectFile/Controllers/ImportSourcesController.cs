@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using System.Text.Json.Serialization;
@@ -17,6 +18,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
+using Microsoft.IdentityModel.Tokens;
 using MiniProjectFile.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -280,7 +282,8 @@ namespace MiniProjectFile.Controllers
             {
                 return NotFound();
             }
-
+            
+            
             return View(importSource);
         }
 
@@ -294,9 +297,17 @@ namespace MiniProjectFile.Controllers
                 return Problem("Entity set 'EntityFrameWork.ImportSource'  is null.");
             }
             var importSource = await _context.ImportSource.FindAsync(id);
+            var mapdata = (from x in _context.ProductMapValue where x.ImportSourceId == id select x).ToList() ;
+            
+
             if (importSource != null)
             {
                 _context.ImportSource.Remove(importSource);
+            }
+            if (mapdata.Count()!=0)
+            {
+                var connection = _Dcontext.CreateConnection();
+                connection.BulkDelete(mapdata);
             }
 
             await _context.SaveChangesAsync();
@@ -348,6 +359,14 @@ namespace MiniProjectFile.Controllers
 
         }
         public IActionResult Save([Bind("data")] string data, [Bind("id")] int id) {
+            var connection = _Dcontext.CreateConnection();
+            var map = (from x in _context.ProductMapValue where x.ImportSourceId == id select x).ToList();
+            if (map.Count() != 0)
+            {
+                connection.BulkDelete(map);
+            }
+
+
             List<ProductMapValue> dict = JsonConvert.DeserializeObject<List<ProductMapValue>>(data);
             for (int i=0; i < dict.Count(); i++)
             {
@@ -356,7 +375,6 @@ namespace MiniProjectFile.Controllers
             
             dict = dict.Where(x => x.ProductHeader != "").ToList();
             
-            var connection = _Dcontext.CreateConnection();
 
 
             /*_context.ProductMapValue.Add(dict[0]);
@@ -399,6 +417,7 @@ namespace MiniProjectFile.Controllers
         }
         public IActionResult DataInsert([Bind("Id")]int id)
         {
+            
             //Getting TableData
             ImportSource importsource = _context.ImportSource.Find(id);
             var stringdata = importsource.TableData;
@@ -458,81 +477,119 @@ namespace MiniProjectFile.Controllers
 
             }
 
-            
-            foreach (DataRow r in table.Rows) {
-                Console.WriteLine("\n");
-                foreach (var c in mappedcolumnname) {
-                    Console.WriteLine(c + "=" + r[c]);
+/*        Displaying data rows and table
+*/            /*  foreach (DataRow r in table.Rows) {
+                  Console.WriteLine("\n");
+                  foreach (var c in mappedcolumnname) {
+                      Console.WriteLine(c + "=" + r[c]);
 
-                }
-            }
+                  }
+              }*/
 
             var listofheaders = productheader.Zip(mappedcolumnname, (p, m) => new { ProductName=p, MappedName=m });
             List<ProductTable> listproduct = new();
+
+
             foreach (DataRow r in table.Rows)
             {
                 ProductTable product = new ProductTable();
                 product.ImportSourceId = id;
-                foreach (var c in listofheaders) {
-                    string productmap = c.ProductName;
 
+
+                foreach (var c in listofheaders)
+                {
+                    string productmap = c.ProductName;
                     string mapcolumn = r[c.MappedName].ToString();
-                    if (productmap =="ProductId"){
-                        product.ProductId = mapcolumn;
-                    }
-                    if (productmap == "Link")
+
+                    /*foreach (var p in productheader)
                     {
-                        product.Link = mapcolumn;
-                    }
-                    if (productmap == "Title")
+                        if (productmap == p)
+                        {
+                            product. = mapcolumn;
+                        }
+                    }*/
+                    Type type = product.GetType();
+                    PropertyInfo prop = type.GetProperty(productmap);
+                    var test = prop.GetType();
+                    var test2=typeof(string);
+                    try
                     {
-                        product.Title = mapcolumn;
+                        prop.SetValue(product, mapcolumn, null);
+                        
                     }
-                    if (productmap == "Description")
+                    catch (ArgumentException ex)
                     {
-                        product.Description = mapcolumn;
-                    }
-                    if (productmap == "Price")
-                    {
-                        double price = double.Parse(mapcolumn);
-                        product.Price = price;
-                    }
-                    if (productmap == "SalePrice")
-                    {
-                        double price = 0;
                         if (mapcolumn == "")
                         {
-                            price = product.Price;
+                            double price = product.Price;
+                            prop.SetValue(product, price, null);
+                            
                         }
-                        else {
-                            price = double.Parse(mapcolumn);
+                        else
+                        {
+                            prop.SetValue(product, double.Parse(mapcolumn), null);
+                           
                         }
+                    }
+
+
+                        /*if (productmap =="ProductId"){
+                            product.ProductId = mapcolumn;
+                        }
+                        if (productmap == "Link")
+                        {
+                            product.Link = mapcolumn;
+                        }
+                        if (productmap == "Title")
+                        {
+                            product.Title = mapcolumn;
+                        }
+                        if (productmap == "Description")
+                        {
+                            product.Description = mapcolumn;
+                        }
+                        if (productmap == "Price")
+                        {
+                            double price = double.Parse(mapcolumn);
+                            product.Price = price;
+                        }
+                        if (productmap == "SalePrice")
+                        {
+                            double price = 0;
+                            if (mapcolumn == "")
+                            {
+                                price = product.Price;
+                            }
+                            else {
+                                price = double.Parse(mapcolumn);
+                            }
+
+                            product.SalePrice = price;
+
+                        }
+                        if (productmap == "ImageLink")
+                        {
+                            product.ImageLink = mapcolumn;
+                        }
+                        if (productmap == "Brand")
+                        {
+                            product.Brand = mapcolumn;
+                        }
+                        if (productmap == "Color")
+                        {
+                            product.Color = mapcolumn;
+                        }
+                        if (productmap == "Size")
+                        {
+                            product.Size = mapcolumn;
+                        }*/
+
+
+
+
                         
-                        product.SalePrice = price;
-
-                    }
-                    if (productmap == "ImageLink")
-                    {
-                        product.ImageLink = mapcolumn;
-                    }
-                    if (productmap == "Brand")
-                    {
-                        product.Brand = mapcolumn;
-                    }
-                    if (productmap == "Color")
-                    {
-                        product.Color = mapcolumn;
-                    }
-                    if (productmap == "Size")
-                    {
-                        product.Size = mapcolumn;
-                    }
-
-
                 }
-
                 listproduct.Add(product);
-
             }
 
 
@@ -585,7 +642,12 @@ namespace MiniProjectFile.Controllers
 
         public IActionResult Data()
         {
-            List<ProductTable> data = (from col in _context.ProductTable select col).ToList();
+/*            List<ProductTable> data = (from col in _context.ProductTable select col).ToList();
+*/            var data = _context.ProductTable.ToList();
+            return View(data);
+        }
+        public IActionResult DataView([Bind("id")] int id) {
+            var data = (from col in _context.ProductTable where col.ImportSourceId==id  select col).ToList();
             return View(data);
         }
     }

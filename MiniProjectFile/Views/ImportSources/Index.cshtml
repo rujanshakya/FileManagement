@@ -9,7 +9,7 @@
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
-<table class="table table-bordered">
+<table class="table table-primary" id="dataTable">
     <thead>
         <tr>
             <th>
@@ -30,7 +30,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.CreatedOn)
             </th>
-            <th></th>
+            <th>
+                Functions
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -54,14 +56,19 @@
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedOn)
             </td>
-            <td>
+            <td style="width:800px">
                 <a asp-action="Edit" class="btn btn-warning" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" class="btn btn-primary" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" class="btn btn-danger" asp-route-id="@item.Id">Delete</a>
-                <a asp-action="Product" class="btn btn-dark" asp-route-id="@item.Id">Mapping</a>
-                    <a asp-action="DataInsert" class="btn btn-outline-success" asp-route-id="@item.Id">DataInsert</a>
+                <a asp-action="Delete" class="btn btn-danger" asp-route-id="@item.Id">Delete</a>|
+                <a asp-action="Product" class="btn btn-dark" asp-route-id="@item.Id">Mapping</a>|
+                    <a asp-action="DataInsert" class="btn btn-outline-success" asp-route-id="@item.Id">DataInsert</a>|
+                    <a asp-action="DataView" class="btn btn-outline-success" asp-route-id="@item.Id">DataView</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+@section Scripts{
+    <script src="~/js/dataTable.js"></script>
+}
