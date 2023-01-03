@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 namespace MiniProjectFile.Models
@@ -17,8 +18,9 @@ namespace MiniProjectFile.Models
         public string? Title { get; set; }
 
         public string? Description { get; set; }
+        [AllowNull]
         public double Price { get; set; }
-
+        [AllowNull]
         public double SalePrice { get; set; }
         public string? ImageLink { get; set; }
         public string? Brand { get; set; }
